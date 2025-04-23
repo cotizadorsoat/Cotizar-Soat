@@ -1,1 +1,123 @@
-# Cotizar-Soat
+import { useState } from "react";
+
+const soatTarifas = [
+  { clase: "Motos", cilindraje: "Ciclomotor", antiguedad: "Todas", precio: 117900 },
+  { clase: "Motos", cilindraje: "Menos de 100 c.c.", antiguedad: "Todas", precio: 243400 },
+  { clase: "Motos", cilindraje: "De 100 a 200 c.c.", antiguedad: "Todas", precio: 326300 },
+  { clase: "Motos", cilindraje: "Más de 200 c.c.", antiguedad: "Todas", precio: 758300 },
+  { clase: "Motos", cilindraje: "Motocarros, tricimoto, cuadriciclos", antiguedad: "Todas", precio: 367800 },
+  { clase: "Camperos y camionetas", cilindraje: "Menos de 1500 c.c.", antiguedad: "0-9", precio: 789600 },
+  { clase: "Camperos y camionetas", cilindraje: "Menos de 1500 c.c.", antiguedad: "10+", precio: 949200 },
+  { clase: "Camperos y camionetas", cilindraje: "1500 a 2500 c.c.", antiguedad: "0-9", precio: 942800 },
+  { clase: "Camperos y camionetas", cilindraje: "1500 a 2500 c.c.", antiguedad: "10+", precio: 1116800 },
+  { clase: "Camperos y camionetas", cilindraje: "Más de 2500 c.c.", antiguedad: "0-9", precio: 1105900 },
+  { clase: "Camperos y camionetas", cilindraje: "Más de 2500 c.c.", antiguedad: "10+", precio: 1269000 },
+  { clase: "Carga/Mixto", cilindraje: "Menos de 5 toneladas", antiguedad: "Todas", precio: 884700 },
+  { clase: "Carga/Mixto", cilindraje: "Entre 5 y 15 toneladas", antiguedad: "Todas", precio: 1277600 },
+  { clase: "Carga/Mixto", cilindraje: "Más de 15 toneladas", antiguedad: "Todas", precio: 1615500 },
+  { clase: "Oficiales/Especiales", cilindraje: "Menos de 1500 c.c.", antiguedad: "Todas", precio: 995500 },
+  { clase: "Oficiales/Especiales", cilindraje: "1500 a 2500 c.c.", antiguedad: "Todas", precio: 1255100 },
+  { clase: "Oficiales/Especiales", cilindraje: "Más de 2500 c.c.", antiguedad: "Todas", precio: 1504700 },
+  { clase: "Autos familiares", cilindraje: "Menos de 1500 c.c.", antiguedad: "0-9", precio: 445300 },
+  { clase: "Autos familiares", cilindraje: "Menos de 1500 c.c.", antiguedad: "10+", precio: 590400 },
+  { clase: "Autos familiares", cilindraje: "1500 a 2500 c.c.", antiguedad: "0-9", precio: 542400 },
+  { clase: "Autos familiares", cilindraje: "1500 a 2500 c.c.", antiguedad: "10+", precio: 674700 },
+  { clase: "Autos familiares", cilindraje: "Más de 2500 c.c.", antiguedad: "0-9", precio: 633500 },
+  { clase: "Autos familiares", cilindraje: "Más de 2500 c.c.", antiguedad: "10+", precio: 751300 },
+  { clase: "Seis+ pasajeros", cilindraje: "Menos de 2500 c.c.", antiguedad: "0-9", precio: 794100 },
+  { clase: "Seis+ pasajeros", cilindraje: "Menos de 2500 c.c.", antiguedad: "10+", precio: 1013600 },
+  { clase: "Seis+ pasajeros", cilindraje: "2500 c.c. o más", antiguedad: "0-9", precio: 1063000 },
+  { clase: "Seis+ pasajeros", cilindraje: "2500 c.c. o más", antiguedad: "10+", precio: 1276400 },
+  { clase: "Negocios/Taxi", cilindraje: "Menos de 1500 c.c.", antiguedad: "0-9", precio: 267900 },
+  { clase: "Negocios/Taxi", cilindraje: "Menos de 1500 c.c.", antiguedad: "10+", precio: 334500 },
+  { clase: "Negocios/Taxi", cilindraje: "1500 a 2500 c.c.", antiguedad: "0-9", precio: 332700 },
+  { clase: "Negocios/Taxi", cilindraje: "1500 a 2500 c.c.", antiguedad: "10+", precio: 410900 },
+  { clase: "Negocios/Taxi", cilindraje: "Más de 2500 c.c.", antiguedad: "0-9", precio: 429000 },
+  { clase: "Negocios/Taxi", cilindraje: "Más de 2500 c.c.", antiguedad: "10+", precio: 503200 },
+  { clase: "Buses urbanos", cilindraje: "Todas", antiguedad: "Todas", precio: 640000 },
+  { clase: "Público intermunicipal", cilindraje: "Menor a 10 pasajeros", antiguedad: "Todas", precio: 632700 },
+  { clase: "Público intermunicipal", cilindraje: "10 o más pasajeros", antiguedad: "Todas", precio: 917700 }
+];
+
+export default function CotizadorSOAT() {
+  const [clase, setClase] = useState("");
+  const [cilindraje, setCilindraje] = useState("");
+  const [modelo, setModelo] = useState("");
+  const [placa, setPlaca] = useState("");
+  const [precio, setPrecio] = useState(null);
+
+  const calcular = () => {
+    const antiguedad = (2025 - parseInt(modelo)) <= 9 ? "0-9" : "10+";
+    const tarifa = soatTarifas.find(
+      (item) =>
+        item.clase === clase &&
+        item.cilindraje === cilindraje &&
+        (item.antiguedad === "Todas" || item.antiguedad === antiguedad)
+    );
+    setPrecio(tarifa ? tarifa.precio : "No encontrado");
+  };
+
+  const generarMensajeWhatsApp = () => {
+    return `Hola, quiero cotizar un SOAT para:\nClase: ${clase}\nSubtipo/Cilindraje: ${cilindraje}\nModelo: ${modelo}\nPlaca: ${placa}\nValor: $${precio?.toLocaleString()}`;
+  };
+
+  return (
+    <div className="max-w-md mx-auto p-4 bg-white rounded-2xl shadow">
+      <h1 className="text-xl font-bold mb-4">Cotiza tu SOAT 2025 INVERSIONES MARY</h1>
+
+      <label className="block mb-2">Clase de vehículo:</label>
+      <select value={clase} onChange={(e) => setClase(e.target.value)} className="w-full mb-4 p-2 border rounded">
+        <option value="">Selecciona</option>
+        {[...new Set(soatTarifas.map((t) => t.clase))].map((c) => (
+          <option key={c} value={c}>{c}</option>
+        ))}
+      </select>
+
+      <label className="block mb-2">Cilindraje/Subtipo:</label>
+      <select value={cilindraje} onChange={(e) => setCilindraje(e.target.value)} className="w-full mb-4 p-2 border rounded">
+        <option value="">Selecciona</option>
+        {soatTarifas
+          .filter((t) => t.clase === clase)
+          .map((t) => t.cilindraje)
+          .filter((v, i, a) => a.indexOf(v) === i)
+          .map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+      </select>
+
+      <label className="block mb-2">Modelo (año):</label>
+      <input type="number" value={modelo} onChange={(e) => setModelo(e.target.value)} className="w-full mb-4 p-2 border rounded" />
+
+      <label className="block mb-2">Placa del vehículo:</label>
+      <input type="text" value={placa} onChange={(e) => setPlaca(e.target.value)} className="w-full mb-4 p-2 border rounded" />
+
+      <button onClick={calcular} className="bg-blue-500 text-white w-full p-2 rounded hover:bg-blue-600">Cotizar</button>
+
+      {precio && (
+        <div className="mt-4 p-4 bg-gray-100 rounded">
+          <p className="text-lg font-semibold">Valor del SOAT: {typeof precio === 'number' ? `$${precio.toLocaleString()}` : precio}</p>
+          <a
+            href={`https://wa.me/573136428007?text=${encodeURIComponent(generarMensajeWhatsApp())}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-block bg-green-500 text-white p-2 rounded hover:bg-green-600"
+          >
+            Compra Punto Fisico Bogotá B. Restrepo
+          </a>
+          <div className="flex items-center justify-center mt-2">
+            <a
+              href={`https://wa.me/573136428007?text=${encodeURIComponent(generarMensajeWhatsApp())}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center border border-green-700 rounded px-3 py-1 hover:bg-green-100"
+            >
+              <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" className="w-7 h-7 mr-2" />
+              <span className="text-green-700 font-extrabold uppercase border border-green-700 px-3 py-1 rounded bg-white">ASESOR</span>
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+![1000232213](https://github.com/user-attachments/assets/e2140dfb-338d-465e-89cd-7bffe9def68e)
